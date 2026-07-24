@@ -1,5 +1,5 @@
 /**
- * Bullet Entity for Silly Shooter / Circle Survivor
+ * Bullet Entity for Silly Shooter
  */
 export class Bullet {
   constructor(x, y, vx, vy) {

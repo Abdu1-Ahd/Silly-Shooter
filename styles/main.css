@@ -1,4 +1,4 @@
-/* Main stylesheet for Silly Shooter / Circle Survivor */
+/* Main stylesheet for Silly Shooter */
 :root {
   --bg-dark: #050816;
   --bg-panel: rgba(15, 23, 42, 0.92);
@@ -38,7 +38,8 @@ html[data-theme="light"] {
   touch-action: manipulation;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -65,7 +66,7 @@ html, body {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 50px 50px;
@@ -88,7 +89,8 @@ html, body {
   display: none;
 }
 
-@media (max-width: 1024px), (pointer: coarse) {
+@media (max-width: 1024px),
+(pointer: coarse) {
   #touch-controls {
     display: block;
   }
@@ -178,10 +180,15 @@ html[data-theme="light"]::view-transition-new(root) {
   z-index: 15;
   background-color: #ffffff;
   pointer-events: none;
-  animation: nuke-flash-anim 0.5s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  animation: nuke-flash-anim 2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
 }
 
 @keyframes nuke-flash-anim {
-  0% { opacity: 0.95; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }

@@ -1,5 +1,5 @@
 /**
- * Overlays Manager for Silly Shooter / Circle Survivor
+ * Overlays Manager for Silly Shooter
  * Manages Start Screen, Pause Screen (ESC menu), Settings Modal, and Game Over overlays.
  */
 export class OverlaysManager {

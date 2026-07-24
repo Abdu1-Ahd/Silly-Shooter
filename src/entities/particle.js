@@ -1,5 +1,5 @@
 /**
- * Particle FX Entity for Silly Shooter / Circle Survivor
+ * Particle FX Entity for Silly Shooter
  */
 export class Particle {
   constructor(x, y, color) {

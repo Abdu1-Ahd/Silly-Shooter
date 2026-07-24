@@ -1,5 +1,5 @@
 /**
- * Core Game Engine & State Machine for Silly Shooter / Circle Survivor
+ * Core Game Engine & State Machine for Silly Shooter
  */
 import { Player } from '../entities/player.js';
 import { spawnEnemy } from '../entities/enemy.js';
@@ -56,7 +56,7 @@ export class GameEngine {
     if (saved && typeof saved.topScore === 'number') {
       this.topScore = saved.topScore;
     } else {
-      this.topScore = Number(localStorage.getItem('circleSurvivorTopScore')) || 0;
+      this.topScore = Number(localStorage.getItem('sillyShooterTopScore') || localStorage.getItem('circleSurvivorTopScore')) || 0;
     }
 
     // Bind unified Input engine
@@ -88,13 +88,13 @@ export class GameEngine {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', nextTheme);
-        try { localStorage.setItem('circleSurvivorTheme', nextTheme); } catch(e){}
+        try { localStorage.setItem('sillyShooterTheme', nextTheme); } catch(e){}
         return nextTheme === 'light';
       },
     });
 
     // Load initial Theme
-    const savedTheme = localStorage.getItem('circleSurvivorTheme') || 'dark';
+    const savedTheme = localStorage.getItem('sillyShooterTheme') || localStorage.getItem('circleSurvivorTheme') || 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
     overlays.updateThemeButtonUI(savedTheme === 'light');
 
@@ -337,6 +337,12 @@ export class GameEngine {
   }
 
   triggerNuke() {
+    // Screen white flash overlay mimicking nuke explosion
+    const flash = document.createElement('div');
+    flash.className = 'nuke-flash';
+    this.container.appendChild(flash);
+    setTimeout(() => flash.remove(), 500);
+
     for (const enemy of this.enemies) {
       this.spawnParticleBurst(enemy.x, enemy.y, '#fb3b5b', 16);
       this.score += enemy.scoreVal;

@@ -1,5 +1,5 @@
 /**
- * Powerup Drops Entity for Silly Shooter / Circle Survivor
+ * Powerup Drops Entity for Silly Shooter
  */
 export class Powerup {
   constructor(type, x, y) {

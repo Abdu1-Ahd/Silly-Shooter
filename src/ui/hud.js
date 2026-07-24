@@ -1,5 +1,5 @@
 /**
- * HUD Manager for Silly Shooter / Circle Survivor
+ * HUD Manager for Silly Shooter
  */
 export class HUDManager {
   constructor() {

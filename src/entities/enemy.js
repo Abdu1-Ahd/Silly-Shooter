@@ -1,5 +1,5 @@
 /**
- * Enemy Entity for Silly Shooter / Circle Survivor
+ * Enemy Entity for Silly Shooter
  */
 export class Enemy {
   constructor(type, x, y) {

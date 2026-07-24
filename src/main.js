@@ -1,5 +1,5 @@
 /**
- * Main Application Bootstrap for Silly Shooter / Circle Survivor
+ * Main Application Bootstrap for Silly Shooter
  */
 import { gameEngine } from './engine/game.js';
 
