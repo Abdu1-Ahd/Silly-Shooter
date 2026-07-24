@@ -62,9 +62,15 @@ export class GameEngine {
     // Bind unified Input engine
     input.init(this.container, () => this.state);
 
-    // ESC key listener - strictly active only during PLAYING & PAUSED
+    // ESC key listener & HUD Pause button - strictly active only during PLAYING & PAUSED
     input.onEsc(() => {
       this.togglePause();
+    });
+
+    hud.bindPauseClick(() => {
+      if (this.state === 'PLAYING' || this.state === 'PAUSED') {
+        this.togglePause();
+      }
     });
 
     // Bind UI Overlays
@@ -72,7 +78,25 @@ export class GameEngine {
       onStart: () => this.startGame(),
       onResume: () => this.resumeGame(),
       onRestart: () => this.startGame(),
+      onHome: () => this.goHome(),
+      onToggleSfx: () => {
+        audio.init();
+        audio.setMuted(!audio.muted);
+        return audio.muted;
+      },
+      onToggleTheme: () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        try { localStorage.setItem('circleSurvivorTheme', nextTheme); } catch(e){}
+        return nextTheme === 'light';
+      },
     });
+
+    // Load initial Theme
+    const savedTheme = localStorage.getItem('circleSurvivorTheme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    overlays.updateThemeButtonUI(savedTheme === 'light');
 
     // Notify YouTube Playables SDK
     ytSDK.notifyFirstFrameReady();
@@ -117,6 +141,15 @@ export class GameEngine {
 
     cancelAnimationFrame(this.animationId);
     this.animationId = requestAnimationFrame((now) => this.gameLoop(now));
+  }
+
+  goHome() {
+    this.state = 'START';
+    cancelAnimationFrame(this.animationId);
+    this.clearAllEntities();
+    hud.updateScore(0);
+    hud.updateTime(0);
+    overlays.showStartScreen(this.topScore);
   }
 
   togglePause() {

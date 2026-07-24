@@ -168,7 +168,9 @@ export class InputEngine {
 
     const len = Math.hypot(dx, dy);
     if (len > 0) {
-      return { x: dx / Math.max(1, len), y: dy / Math.max(1, len) };
+      // Normalize vector so diagonal movement magnitude never exceeds 1
+      const scale = len > 1 ? (1 / len) : 1;
+      return { x: dx * scale, y: dy * scale };
     }
     return { x: 0, y: 0 };
   }

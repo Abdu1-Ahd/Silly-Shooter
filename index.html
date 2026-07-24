@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Silly Shooter - Circle Survivor</title>
-  
+
   <!-- CSS Design System & Components -->
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/hud.css">
   <link rel="stylesheet" href="styles/overlays.css">
 </head>
+
 <body>
   <main id="game-container" aria-label="Silly Shooter Survivor Game">
-    
+
     <!-- Top HUD Bar (Offset for YouTube Playables Top Safe Area) -->
     <div id="hud">
       <div class="hud-group">
         <span class="stat">Score: <span id="score" class="stat-val">0</span></span>
         <span class="stat">Time: <span id="time" class="stat-val">0s</span></span>
+        <button id="pause-btn" class="hud-btn" title="Pause Game (ESC)" aria-label="Pause Game">⏸️</button>
       </div>
       <div id="powerup-bar"></div>
     </div>
@@ -36,21 +39,29 @@
     <!-- Start Overlay Screen -->
     <div id="start-overlay" class="overlay">
       <section class="panel">
-        <h1>Silly Shooter</h1>
-        <p>Survive against relentless shape enemies, collect power-ups, and get the highest score!</p>
-        
+        <h1>Circle Survivor</h1>
+        <p class="welcome-dialog">
+          "The arena is closing in, Survivor. Outmaneuver the swarm, seize power-ups, and claim your high score!"
+        </p>
+
         <div class="controls-hint">
           <strong>🎮 Controls:</strong>
-          <ul>
-            <li><strong>WASD / Arrows:</strong> Move Player</li>
-            <li><strong>Mouse Click / Touch:</strong> Fire weapon</li>
-            <li><strong>ESC Key:</strong> Pause / Resume (in-game only)</li>
+          <ul id="desktop-controls-list" class="desktop-only">
+            <li><strong>WASD / Arrow Keys:</strong> Move Survivor</li>
+            <li><strong>Mouse Aim + Click:</strong> Fire weapon</li>
+            <li><strong>ESC Key or ⏸️ Button:</strong> Pause / Resume</li>
+          </ul>
+          <ul id="mobile-controls-list" class="mobile-only">
+            <li><strong>Left Joystick (Drag):</strong> Move Survivor</li>
+            <li><strong>FIRE Button (Right):</strong> Tap/Hold to shoot</li>
+            <li><strong>⏸️ Button (Top Bar):</strong> Pause / Resume</li>
           </ul>
         </div>
 
         <p>Top Score: <span id="top-score-display" class="stat-val">0</span></p>
         <div class="btn-group">
-          <button id="start-button" class="btn btn-primary">Start Game</button>
+          <button id="start-button" class="btn btn-primary">Start Mission</button>
+          <button id="start-settings-btn" class="btn btn-secondary">⚙️ Settings</button>
         </div>
       </section>
     </div>
@@ -58,11 +69,12 @@
     <!-- Pause Overlay Screen (Active on ESC Key during PLAYING) -->
     <div id="pause-overlay" class="overlay" hidden>
       <section class="panel">
-        <h2>⏸️ Game Paused</h2>
-        <p>Press <strong>ESC</strong> or click below to resume your game.</p>
-        
+        <h2>⏸️ Tactical Pause</h2>
+        <p>Press <strong>ESC</strong> or click below to return to the arena.</p>
+
         <div class="btn-group">
           <button id="resume-button" class="btn btn-primary">Resume Game</button>
+          <button id="pause-settings-btn" class="btn btn-secondary">⚙️ Settings</button>
           <button id="restart-button" class="btn btn-secondary">Restart Game</button>
         </div>
       </section>
@@ -71,11 +83,35 @@
     <!-- Game Over Overlay Screen -->
     <div id="game-over-overlay" class="overlay" hidden>
       <section class="panel">
-        <h1>Game Over</h1>
-        <p>You survived for <strong id="final-time">0s</strong> and scored <strong id="final-score" class="stat-val">0</strong> points!</p>
-        
+        <h1>Mission Compromised</h1>
+        <p>You survived for <strong id="final-time">0s</strong> and scored <strong id="final-score"
+            class="stat-val">0</strong> points!</p>
+
         <div class="btn-group">
           <button id="retry-button" class="btn btn-primary">Play Again</button>
+          <button id="home-button" class="btn btn-secondary">Main Menu</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Settings Overlay Screen -->
+    <div id="settings-overlay" class="overlay" hidden>
+      <section class="panel">
+        <h2>⚙️ Settings</h2>
+
+        <div class="settings-group">
+          <div class="setting-row">
+            <span>Sound Effects (SFX)</span>
+            <button id="sfx-toggle-btn" class="btn btn-toggle active">🔊 ON</button>
+          </div>
+          <div class="setting-row">
+            <span>Theme Mode</span>
+            <button id="theme-toggle-btn" class="btn btn-toggle active">🌙 Dark</button>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button id="settings-back-btn" class="btn btn-primary">Back</button>
         </div>
       </section>
     </div>
@@ -85,4 +121,5 @@
   <!-- ES Module Application Bootstrap -->
   <script type="module" src="src/main.js"></script>
 </body>
+
 </html>

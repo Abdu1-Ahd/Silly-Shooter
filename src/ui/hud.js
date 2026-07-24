@@ -7,6 +7,16 @@ export class HUDManager {
     this.topScoreEl = document.getElementById('top-score');
     this.timeEl = document.getElementById('time');
     this.powerupBar = document.getElementById('powerup-bar');
+    this.pauseBtn = document.getElementById('pause-btn');
+  }
+
+  bindPauseClick(callback) {
+    if (this.pauseBtn) {
+      this.pauseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        callback();
+      });
+    }
   }
 
   updateScore(score) {

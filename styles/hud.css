@@ -38,6 +38,35 @@
   font-weight: 800;
 }
 
+/* Pause Button in HUD */
+.hud-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  color: var(--text-main);
+  font-size: 16px;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.hud-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  transform: scale(1.08);
+  color: var(--accent-cyan);
+}
+
+.hud-btn:active {
+  transform: scale(0.95);
+}
+
 /* Active Power-up indicator badges */
 #powerup-bar {
   display: flex;
