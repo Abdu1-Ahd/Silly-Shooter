@@ -1,0 +1,129 @@
+/* Main stylesheet for Silly Shooter */
+:root {
+  --bg-dark: #050816;
+  --bg-panel: rgba(15, 23, 42, 0.92);
+  --border-color: #334155;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-cyan: #38bdf8;
+  --accent-cyan-hover: #7dd3fc;
+  --accent-red: #fb3b5b;
+  --accent-yellow: #fde047;
+  --accent-purple: #c084fc;
+  --accent-green: #4ade80;
+  --radius-panel: 20px;
+  --radius-pill: 9999px;
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  font-weight: 600;
+}
+
+#game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #1e293b 0%, #0f172a 45%, #050816 100%);
+  cursor: crosshair;
+}
+
+/* Field Grid lines for arcade feel */
+#game-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+}
+
+/* Entities container */
+#entities-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Touch Control Layer for Mobile Playables */
+#touch-controls {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: none;
+}
+
+@media (max-width: 1024px), (pointer: coarse) {
+  #touch-controls {
+    display: block;
+  }
+}
+
+.touch-joystick-zone {
+  position: absolute;
+  bottom: 30px;
+  left: 30px;
+  width: 120px;
+  height: 120px;
+  border: 2px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  pointer-events: auto;
+}
+
+.touch-joystick-knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  margin-left: -22px;
+  background: rgba(56, 189, 248, 0.5);
+  border: 2px solid #38bdf8;
+  border-radius: 50%;
+  transform: translate(0, 0);
+  pointer-events: none;
+}
+
+.touch-fire-button {
+  position: absolute;
+  bottom: 40px;
+  right: 35px;
+  width: 80px;
+  height: 80px;
+  background: rgba(251, 59, 91, 0.4);
+  border: 2px solid #fb3b5b;
+  border-radius: 50%;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(251, 59, 91, 0.3);
+}
+
+.touch-fire-button:active {
+  background: rgba(251, 59, 91, 0.8);
+  transform: scale(0.95);
+}

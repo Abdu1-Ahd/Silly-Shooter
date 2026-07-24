@@ -2,138 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Circle Survivor</title>
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; overflow: hidden; background: #050816; color: #f8fafc; font: 600 16px/1.2 system-ui, sans-serif; }
-    #game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: radial-gradient(circle at center, #172554, #050816 70%); cursor: crosshair; }
-    #hud { position: absolute; z-index: 3; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; padding: clamp(12px, 3vw, 24px); pointer-events: none; }
-    .stat { padding: 9px 13px; border: 1px solid #475569; border-radius: 999px; background: #0f172acc; }
-    #player, .enemy, .bullet { position: absolute; border-radius: 50%; pointer-events: none; }
-    #player { z-index: 2; width: 28px; height: 28px; background: #e0f2fe; box-shadow: 0 0 22px #38bdf8; }
-    .enemy { width: 22px; height: 22px; background: #fb3b5b; box-shadow: 0 0 16px #fb3b5b; }
-    .bullet { z-index: 1; width: 8px; height: 8px; background: #fef08a; box-shadow: 0 0 12px #fde047; }
-    #overlay { position: absolute; z-index: 4; inset: 0; display: grid; place-items: center; background: #02061799; }
-    #overlay[hidden] { display: none; }
-    #panel { width: min(90vw, 360px); padding: 30px; text-align: center; border: 1px solid #475569; border-radius: 20px; background: #0f172aeb; box-shadow: 0 20px 60px #0008; }
-    h1 { margin: 0 0 10px; font-size: clamp(26px, 6vw, 38px); }
-    p { color: #cbd5e1; }
-    button { width: 100%; margin-top: 12px; padding: 13px; border: 0; border-radius: 10px; background: #38bdf8; color: #082f49; font: inherit; font-weight: 800; cursor: pointer; }
-    button:hover { background: #7dd3fc; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Silly Shooter - Circle Survivor</title>
+  
+  <!-- CSS Design System & Components -->
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/hud.css">
+  <link rel="stylesheet" href="styles/overlays.css">
 </head>
 <body>
-  <main id="game-container" aria-label="Circle survivor game">
-    <div id="hud"><span class="stat">Score: <span id="score">0</span></span><span class="stat">Time: <span id="time">0s</span></span></div>
-    <div id="player" aria-label="Player"></div>
-    <div id="overlay"><section id="panel"><h1 id="title">Circle Survivor</h1><p id="message">Use arrow keys or WASD to move. Click to fire toward the cursor.</p><p>Top score: <span id="top-score">0</span></p><button id="start-button">Start Game</button></section></div>
+  <main id="game-container" aria-label="Silly Shooter Survivor Game">
+    
+    <!-- Top HUD Bar (Offset for YouTube Playables Top Safe Area) -->
+    <div id="hud">
+      <div class="hud-group">
+        <span class="stat">Score: <span id="score" class="stat-val">0</span></span>
+        <span class="stat">Time: <span id="time" class="stat-val">0s</span></span>
+      </div>
+      <div id="powerup-bar"></div>
+    </div>
+
+    <!-- Dynamic Entities Container -->
+    <div id="entities-layer"></div>
+
+    <!-- Touch Joystick Controls for YouTube Mobile Playables -->
+    <div id="touch-controls">
+      <div id="touch-joystick-zone" class="touch-joystick-zone">
+        <div id="touch-joystick-knob" class="touch-joystick-knob"></div>
+      </div>
+      <div id="touch-fire-btn" class="touch-fire-button">FIRE</div>
+    </div>
+
+    <!-- Start Overlay Screen -->
+    <div id="start-overlay" class="overlay">
+      <section class="panel">
+        <h1>Silly Shooter</h1>
+        <p>Survive against relentless shape enemies, collect power-ups, and get the highest score!</p>
+        
+        <div class="controls-hint">
+          <strong>🎮 Controls:</strong>
+          <ul>
+            <li><strong>WASD / Arrows:</strong> Move Player</li>
+            <li><strong>Mouse Click / Touch:</strong> Fire weapon</li>
+            <li><strong>ESC Key:</strong> Pause / Resume (in-game only)</li>
+          </ul>
+        </div>
+
+        <p>Top Score: <span id="top-score-display" class="stat-val">0</span></p>
+        <div class="btn-group">
+          <button id="start-button" class="btn btn-primary">Start Game</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Pause Overlay Screen (Active on ESC Key during PLAYING) -->
+    <div id="pause-overlay" class="overlay" hidden>
+      <section class="panel">
+        <h2>⏸️ Game Paused</h2>
+        <p>Press <strong>ESC</strong> or click below to resume your game.</p>
+        
+        <div class="btn-group">
+          <button id="resume-button" class="btn btn-primary">Resume Game</button>
+          <button id="restart-button" class="btn btn-secondary">Restart Game</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Game Over Overlay Screen -->
+    <div id="game-over-overlay" class="overlay" hidden>
+      <section class="panel">
+        <h1>Game Over</h1>
+        <p>You survived for <strong id="final-time">0s</strong> and scored <strong id="final-score" class="stat-val">0</strong> points!</p>
+        
+        <div class="btn-group">
+          <button id="retry-button" class="btn btn-primary">Play Again</button>
+        </div>
+      </section>
+    </div>
+
   </main>
-  <script>
-    const container = document.getElementById('game-container');
-    const player = document.getElementById('player');
-    const scoreEl = document.getElementById('score');
-    const timeEl = document.getElementById('time');
-    const overlay = document.getElementById('overlay');
-    const title = document.getElementById('title');
-    const message = document.getElementById('message');
-    const topScoreEl = document.getElementById('top-score');
-    const startButton = document.getElementById('start-button');
-    const keys = new Set();
-    let game, animationId;
 
-    function getTopScore() { return Number(localStorage.getItem('circleSurvivorTopScore')) || 0; }
-    function showTopScore() { topScoreEl.textContent = getTopScore(); }
-    function centrePlayer() { game.x = (container.clientWidth - 28) / 2; game.y = (container.clientHeight - 28) / 2; }
-    function renderPlayer() { player.style.transform = `translate(${game.x}px, ${game.y}px)`; }
-
-    function startGame() {
-      cancelAnimationFrame(animationId);
-      document.querySelectorAll('.enemy, .bullet').forEach(item => item.remove());
-      game = { x: 0, y: 0, score: 0, startedAt: performance.now(), lastFrame: performance.now(), lastSpawn: performance.now(), enemies: [], bullets: [], running: true };
-      centrePlayer(); renderPlayer(); scoreEl.textContent = '0'; timeEl.textContent = '0s';
-      overlay.hidden = true;
-      animationId = requestAnimationFrame(gameLoop);
-    }
-
-    function spawnEnemy() {
-      const radius = 11, w = container.clientWidth, h = container.clientHeight;
-      const side = Math.floor(Math.random() * 4);
-      let x, y;
-      if (side === 0) { x = Math.random() * w; y = -radius * 2; }
-      else if (side === 1) { x = w + radius * 2; y = Math.random() * h; }
-      else if (side === 2) { x = Math.random() * w; y = h + radius * 2; }
-      else { x = -radius * 2; y = Math.random() * h; }
-      const element = document.createElement('div'); element.className = 'enemy'; container.append(element);
-      game.enemies.push({ x, y, element });
-    }
-
-    function gameLoop(now) {
-      if (!game.running) return;
-      const dt = Math.min((now - game.lastFrame) / 1000, 0.05); game.lastFrame = now;
-      const speed = 290;
-      let moveX = 0;
-      let moveY = 0;
-      if (keys.has('ArrowLeft') || keys.has('a')) moveX -= 1;
-      if (keys.has('ArrowRight') || keys.has('d')) moveX += 1;
-      if (keys.has('ArrowUp') || keys.has('w')) moveY -= 1;
-      if (keys.has('ArrowDown') || keys.has('s')) moveY += 1;
-      if (moveX !== 0 || moveY !== 0) {
-        const length = Math.hypot(moveX, moveY) || 1;
-        game.x += (moveX / length) * speed * dt;
-        game.y += (moveY / length) * speed * dt;
-      }
-      game.x = Math.max(0, Math.min(container.clientWidth - 28, game.x)); game.y = Math.max(0, Math.min(container.clientHeight - 28, game.y)); renderPlayer();
-      const elapsed = Math.floor((now - game.startedAt) / 1000); timeEl.textContent = `${elapsed}s`;
-      if (now - game.lastSpawn > Math.max(420, 1100 - elapsed * 12)) { spawnEnemy(); game.lastSpawn = now; }
-      for (const enemy of game.enemies) {
-        const dx = game.x + 14 - enemy.x - 11, dy = game.y + 14 - enemy.y - 11;
-        const distance = Math.hypot(dx, dy) || 1, enemySpeed = 70 + Math.min(elapsed * 2, 90);
-        enemy.x += (dx / distance) * enemySpeed * dt; enemy.y += (dy / distance) * enemySpeed * dt;
-        enemy.element.style.transform = `translate(${enemy.x}px, ${enemy.y}px)`;
-        if (distance < 25) { endGame(); return; }
-      }
-      for (let i = game.bullets.length - 1; i >= 0; i--) {
-        const bullet = game.bullets[i];
-        bullet.x += bullet.vx * dt; bullet.y += bullet.vy * dt;
-        bullet.element.style.transform = `translate(${bullet.x}px, ${bullet.y}px)`;
-        const hitIndex = game.enemies.findIndex(enemy => Math.hypot((bullet.x + 4) - (enemy.x + 11), (bullet.y + 4) - (enemy.y + 11)) < 15);
-        if (hitIndex >= 0) {
-          game.enemies[hitIndex].element.remove(); game.enemies.splice(hitIndex, 1);
-          bullet.element.remove(); game.bullets.splice(i, 1); game.score++; scoreEl.textContent = game.score;
-        } else if (bullet.x < -10 || bullet.x > container.clientWidth + 10 || bullet.y < -10 || bullet.y > container.clientHeight + 10) {
-          bullet.element.remove(); game.bullets.splice(i, 1);
-        }
-      }
-      animationId = requestAnimationFrame(gameLoop);
-    }
-
-    function shoot(event) {
-      if (!game?.running || event.target.closest('button')) return;
-      const rect = container.getBoundingClientRect();
-      const startX = game.x + 10, startY = game.y + 10;
-      const dx = event.clientX - rect.left - startX, dy = event.clientY - rect.top - startY;
-      const length = Math.hypot(dx, dy) || 1;
-      const element = document.createElement('div'); element.className = 'bullet'; container.append(element);
-      const bullet = { x: startX, y: startY, vx: dx / length * 650, vy: dy / length * 650, element };
-      element.style.transform = `translate(${bullet.x}px, ${bullet.y}px)`;
-      game.bullets.push(bullet);
-    }
-
-    function endGame() {
-      game.running = false; cancelAnimationFrame(animationId);
-      const top = Math.max(getTopScore(), game.score); localStorage.setItem('circleSurvivorTopScore', top); showTopScore();
-      title.textContent = 'Game Over'; message.textContent = `You survived ${timeEl.textContent} with ${game.score} point${game.score === 1 ? '' : 's'}.`;
-      startButton.textContent = 'Retry Game'; overlay.hidden = false;
-    }
-
-    startButton.addEventListener('click', startGame);
-    container.addEventListener('click', shoot);
-    document.addEventListener('keydown', event => { const key = event.key.toLowerCase(); if (event.key.startsWith('Arrow') || 'wasd'.includes(key)) { event.preventDefault(); keys.add(event.key.startsWith('Arrow') ? event.key : key); } });
-    document.addEventListener('keyup', event => keys.delete(event.key.startsWith('Arrow') ? event.key : event.key.toLowerCase()));
-    window.addEventListener('blur', () => keys.clear());
-    window.addEventListener('resize', () => { if (game?.running) { game.x = Math.min(game.x, container.clientWidth - 28); game.y = Math.min(game.y, container.clientHeight - 28); renderPlayer(); } });
-    showTopScore();
-  </script>
+  <!-- ES Module Application Bootstrap -->
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>

@@ -1,0 +1,121 @@
+/* Overlays & Modals stylesheet */
+.overlay {
+  position: absolute;
+  z-index: 20;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 6, 23, 0.75);
+  backdrop-filter: blur(10px);
+  opacity: 1;
+  transition: opacity 0.25s ease-out;
+}
+
+.overlay[hidden] {
+  display: none !important;
+}
+
+.panel {
+  width: min(90vw, 400px);
+  padding: 32px 28px;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-panel);
+  background: var(--bg-panel);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), 0 0 30px rgba(56, 189, 248, 0.1);
+  transform: scale(1);
+  animation: panel-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes panel-pop {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.panel h1 {
+  margin: 0 0 10px;
+  font-size: clamp(28px, 6vw, 40px);
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #f8fafc 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  font-size: 26px;
+  color: var(--accent-yellow);
+}
+
+.panel p {
+  margin: 10px 0;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.controls-hint {
+  margin: 16px 0;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
+  font-size: 13px;
+  color: #cbd5e1;
+  text-align: left;
+}
+
+.controls-hint ul {
+  margin: 6px 0 0 0;
+  padding-left: 18px;
+}
+
+.controls-hint li {
+  margin-bottom: 4px;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--accent-cyan);
+  color: #082f49;
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+}
+
+.btn-primary:hover {
+  background: var(--accent-cyan-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(56, 189, 248, 0.5);
+}
+
+.btn-secondary {
+  background: #334155;
+  color: #f8fafc;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
