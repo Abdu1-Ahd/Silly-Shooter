@@ -98,8 +98,8 @@ body {
 
 .touch-joystick-zone {
   position: absolute;
-  /* Higher off bottom edge for comfortable reach and to avoid system gesture bars */
-  bottom: clamp(60px, 12vh, 140px);
+  /* Positioned higher off bottom edge for ergonomic thumb placement */
+  bottom: clamp(100px, 18vh, 220px);
   width: clamp(100px, 24vw, 140px);
   height: clamp(100px, 24vw, 140px);
   border: 2px dashed rgba(255, 255, 255, 0.3);

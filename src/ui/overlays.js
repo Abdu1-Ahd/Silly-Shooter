@@ -14,6 +14,7 @@ export class OverlaysManager {
     this.restartButton = document.getElementById('restart-button');
     this.retryButton = document.getElementById('retry-button');
     this.homeButton = document.getElementById('home-button');
+    this.pauseHomeBtn = document.getElementById('pause-home-btn');
 
     this.startSettingsBtn = document.getElementById('start-settings-btn');
     this.pauseSettingsBtn = document.getElementById('pause-settings-btn');
@@ -24,18 +25,8 @@ export class OverlaysManager {
     this.finalScoreEl = document.getElementById('final-score');
     this.finalTimeEl = document.getElementById('final-time');
     this.topScoreDisplay = document.getElementById('top-score-display');
-    this.deviceTypeLabel = document.getElementById('device-type-label');
-    this.detectedControlsMode = document.getElementById('detected-controls-mode');
 
     this.previousOverlay = 'start'; // 'start' or 'pause'
-    this.detectDeviceControls();
-  }
-
-  detectDeviceControls() {
-    const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
-    const modeText = isMobile ? 'Mobile / Tablet Touch' : 'Keyboard & Mouse';
-    if (this.deviceTypeLabel) this.deviceTypeLabel.textContent = modeText;
-    if (this.detectedControlsMode) this.detectedControlsMode.textContent = modeText;
   }
 
   bindEvents({ onStart, onResume, onRestart, onHome, onToggleSfx, onToggleTheme }) {
@@ -44,6 +35,7 @@ export class OverlaysManager {
     if (this.restartButton) this.restartButton.addEventListener('click', onRestart);
     if (this.retryButton) this.retryButton.addEventListener('click', onStart);
     if (this.homeButton) this.homeButton.addEventListener('click', onHome);
+    if (this.pauseHomeBtn) this.pauseHomeBtn.addEventListener('click', onHome);
 
     // Settings Navigation
     if (this.startSettingsBtn) {
@@ -151,7 +143,6 @@ export class OverlaysManager {
   }
 
   showStartScreen(topScore) {
-    this.detectDeviceControls();
     if (this.topScoreDisplay) this.topScoreDisplay.textContent = topScore;
     if (this.startOverlay) this.startOverlay.hidden = false;
     if (this.pauseOverlay) this.pauseOverlay.hidden = true;
@@ -160,7 +151,6 @@ export class OverlaysManager {
   }
 
   showPauseScreen() {
-    this.detectDeviceControls();
     if (this.pauseOverlay) this.pauseOverlay.hidden = false;
     if (this.settingsOverlay) this.settingsOverlay.hidden = true;
   }
