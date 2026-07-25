@@ -7,12 +7,13 @@ export class InputEngine {
     this.keys = new Set();
     this.mouse = { x: 0, y: 0, isDown: false };
     this.touchVector = { x: 0, y: 0 };
+    this.touchAimVector = { x: 0, y: 0 };
     this.isTouchFiring = false;
     this.escHandler = null;
     this.getStateFunc = null;
 
-    this.joystickActive = false;
-    this.joystickOrigin = { x: 0, y: 0 };
+    this.moveTouchId = null;
+    this.fireTouchId = null;
   }
 
   /**
@@ -79,63 +80,90 @@ export class InputEngine {
       this.mouse.isDown = false;
     });
 
-    // Touch Joystick & Touch Fire setup for mobile YouTube Playables
+    // Dual Touch Joysticks setup for mobile & tablet YouTube Playables
     this.setupTouchControls();
   }
 
   setupTouchControls() {
-    const joystickZone = document.getElementById('touch-joystick-zone');
-    const joystickKnob = document.getElementById('touch-joystick-knob');
-    const fireBtn = document.getElementById('touch-fire-btn');
+    const moveZone = document.getElementById('touch-move-zone');
+    const moveKnob = document.getElementById('touch-move-knob');
+    const fireZone = document.getElementById('touch-fire-zone');
+    const fireKnob = document.getElementById('touch-fire-knob');
 
-    if (!joystickZone || !fireBtn) return;
+    if (!moveZone || !fireZone) return;
 
-    joystickZone.addEventListener('touchstart', (e) => {
+    // Movement Joystick Touch Event Listeners
+    moveZone.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      const touch = e.touches[0];
-      const rect = joystickZone.getBoundingClientRect();
-      this.joystickOrigin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
-      this.joystickActive = true;
-      this.updateJoystick(touch, joystickKnob);
-    });
-
-    joystickZone.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      if (this.joystickActive && e.touches[0]) {
-        this.updateJoystick(e.touches[0], joystickKnob);
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        if (this.moveTouchId === null) {
+          const touch = e.changedTouches[i];
+          this.moveTouchId = touch.identifier;
+          const rect = moveZone.getBoundingClientRect();
+          this.moveOrigin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          this.updateMoveJoystick(touch, moveKnob, rect.width / 2);
+        }
       }
     });
 
-    const resetJoystick = () => {
-      this.joystickActive = false;
-      this.touchVector = { x: 0, y: 0 };
-      if (joystickKnob) {
-        joystickKnob.style.transform = 'translate(0px, 0px)';
+    // Aim & Fire Joystick Touch Event Listeners
+    fireZone.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        if (this.fireTouchId === null) {
+          const touch = e.changedTouches[i];
+          this.fireTouchId = touch.identifier;
+          this.isTouchFiring = true;
+          const rect = fireZone.getBoundingClientRect();
+          this.fireOrigin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+          this.updateFireJoystick(touch, fireKnob, rect.width / 2);
+        }
+      }
+    });
+
+    // Window-level touchmove to smoothly track dragging even outside zones
+    window.addEventListener('touchmove', (e) => {
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const touch = e.changedTouches[i];
+        if (touch.identifier === this.moveTouchId && moveZone) {
+          const rect = moveZone.getBoundingClientRect();
+          this.updateMoveJoystick(touch, moveKnob, rect.width / 2);
+        }
+        if (touch.identifier === this.fireTouchId && fireZone) {
+          const rect = fireZone.getBoundingClientRect();
+          this.updateFireJoystick(touch, fireKnob, rect.width / 2);
+        }
+      }
+    }, { passive: false });
+
+    // Touch end/cancel listeners
+    const handleTouchEnd = (e) => {
+      for (let i = 0; i < e.changedTouches.length; i++) {
+        const touch = e.changedTouches[i];
+        if (touch.identifier === this.moveTouchId) {
+          this.moveTouchId = null;
+          this.touchVector = { x: 0, y: 0 };
+          if (moveKnob) moveKnob.style.transform = 'translate(0px, 0px)';
+        }
+        if (touch.identifier === this.fireTouchId) {
+          this.fireTouchId = null;
+          this.isTouchFiring = false;
+          this.touchAimVector = { x: 0, y: 0 };
+          if (fireKnob) fireKnob.style.transform = 'translate(0px, 0px)';
+        }
       }
     };
 
-    joystickZone.addEventListener('touchend', resetJoystick);
-    joystickZone.addEventListener('touchcancel', resetJoystick);
-
-    fireBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      this.isTouchFiring = true;
-    });
-
-    const stopTouchFire = () => {
-      this.isTouchFiring = false;
-    };
-
-    fireBtn.addEventListener('touchend', stopTouchFire);
-    fireBtn.addEventListener('touchcancel', stopTouchFire);
+    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchcancel', handleTouchEnd);
   }
 
-  updateJoystick(touch, knobEl) {
-    const dx = touch.clientX - this.joystickOrigin.x;
-    const dy = touch.clientY - this.joystickOrigin.y;
-    const maxRadius = 45;
+  updateMoveJoystick(touch, knobEl, maxRadius) {
+    const dx = touch.clientX - this.moveOrigin.x;
+    const dy = touch.clientY - this.moveOrigin.y;
     const dist = Math.hypot(dx, dy) || 1;
-    const clampedDist = Math.min(dist, maxRadius);
+    const radius = Math.max(30, maxRadius * 0.75);
+    const clampedDist = Math.min(dist, radius);
     const angle = Math.atan2(dy, dx);
 
     const knobX = Math.cos(angle) * clampedDist;
@@ -145,8 +173,27 @@ export class InputEngine {
       knobEl.style.transform = `translate(${knobX}px, ${knobY}px)`;
     }
 
-    this.touchVector.x = Math.cos(angle) * (clampedDist / maxRadius);
-    this.touchVector.y = Math.sin(angle) * (clampedDist / maxRadius);
+    this.touchVector.x = Math.cos(angle) * (clampedDist / radius);
+    this.touchVector.y = Math.sin(angle) * (clampedDist / radius);
+  }
+
+  updateFireJoystick(touch, knobEl, maxRadius) {
+    const dx = touch.clientX - this.fireOrigin.x;
+    const dy = touch.clientY - this.fireOrigin.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const radius = Math.max(30, maxRadius * 0.75);
+    const clampedDist = Math.min(dist, radius);
+    const angle = Math.atan2(dy, dx);
+
+    const knobX = Math.cos(angle) * clampedDist;
+    const knobY = Math.sin(angle) * clampedDist;
+
+    if (knobEl) {
+      knobEl.style.transform = `translate(${knobX}px, ${knobY}px)`;
+    }
+
+    this.touchAimVector.x = Math.cos(angle);
+    this.touchAimVector.y = Math.sin(angle);
   }
 
   /**

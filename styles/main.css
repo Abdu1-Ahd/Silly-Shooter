@@ -98,13 +98,30 @@ body {
 
 .touch-joystick-zone {
   position: absolute;
-  bottom: 30px;
-  left: 30px;
-  width: 120px;
-  height: 120px;
-  border: 2px dashed rgba(255, 255, 255, 0.25);
+  /* Higher off bottom edge for comfortable reach and to avoid system gesture bars */
+  bottom: clamp(60px, 12vh, 140px);
+  width: clamp(100px, 24vw, 140px);
+  height: clamp(100px, 24vw, 140px);
+  border: 2px dashed rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   pointer-events: auto;
+  touch-action: none;
+  background: rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.touch-joystick-zone.move-zone {
+  left: clamp(20px, 5vw, 60px);
+}
+
+.touch-joystick-zone.fire-zone {
+  right: clamp(20px, 5vw, 60px);
+  border-color: rgba(251, 59, 91, 0.45);
+  background: rgba(251, 59, 91, 0.12);
+  box-shadow: 0 0 20px rgba(251, 59, 91, 0.15);
 }
 
 html[data-theme="light"] .touch-joystick-zone {
@@ -115,39 +132,31 @@ html[data-theme="light"] .touch-joystick-zone {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 44px;
-  height: 44px;
-  margin-top: -22px;
-  margin-left: -22px;
-  background: rgba(56, 189, 248, 0.5);
+  width: clamp(38px, 9vw, 48px);
+  height: clamp(38px, 9vw, 48px);
+  margin-top: calc(clamp(38px, 9vw, 48px) / -2);
+  margin-left: calc(clamp(38px, 9vw, 48px) / -2);
+  background: rgba(56, 189, 248, 0.6);
   border: 2px solid var(--accent-cyan);
   border-radius: 50%;
   transform: translate(0, 0);
   pointer-events: none;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
 }
 
-.touch-fire-button {
-  position: absolute;
-  bottom: 40px;
-  right: 35px;
-  width: 80px;
-  height: 80px;
-  background: rgba(251, 59, 91, 0.4);
-  border: 2px solid #fb3b5b;
-  border-radius: 50%;
-  pointer-events: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.touch-joystick-knob.fire-knob {
+  background: rgba(251, 59, 91, 0.7);
+  border-color: #fb3b5b;
+  box-shadow: 0 0 16px rgba(251, 59, 91, 0.6);
+}
+
+.fire-label {
+  pointer-events: none;
+  font-size: clamp(9px, 2.2vw, 11px);
   font-weight: 800;
-  font-size: 14px;
-  color: #fff;
-  box-shadow: 0 0 20px rgba(251, 59, 91, 0.3);
-}
-
-.touch-fire-button:active {
-  background: rgba(251, 59, 91, 0.8);
-  transform: scale(0.95);
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 /* Full-Page Theme Toggle Animation with View Transitions API */

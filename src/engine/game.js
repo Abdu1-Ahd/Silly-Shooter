@@ -196,8 +196,18 @@ export class GameEngine {
     const fireDelay = this.player.getFireRateDelay();
     if (isFiring && (now - this.lastShotTime > fireDelay)) {
       const rect = this.container.getBoundingClientRect();
-      const targetX = input.mouse.x;
-      const targetY = input.mouse.y;
+      let targetX, targetY;
+
+      if (input.isTouchFiring && (input.touchAimVector.x !== 0 || input.touchAimVector.y !== 0)) {
+        // Dual-stick touch aim: calculate target vector point relative to player
+        const playerCenterX = this.player.x + this.player.radius;
+        const playerCenterY = this.player.y + this.player.radius;
+        targetX = playerCenterX + input.touchAimVector.x * 250;
+        targetY = playerCenterY + input.touchAimVector.y * 250;
+      } else {
+        targetX = input.mouse.x;
+        targetY = input.mouse.y;
+      }
 
       const newBullets = createBullets(this.player, targetX, targetY, rect);
       for (const bullet of newBullets) {
