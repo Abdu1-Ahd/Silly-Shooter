@@ -84,19 +84,7 @@ export class GameEngine {
         audio.setMuted(!audio.muted);
         return audio.muted;
       },
-      onToggleTheme: () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', nextTheme);
-        try { localStorage.setItem('sillyShooterTheme', nextTheme); } catch(e){}
-        return nextTheme === 'light';
-      },
     });
-
-    // Load initial Theme
-    const savedTheme = localStorage.getItem('sillyShooterTheme') || localStorage.getItem('circleSurvivorTheme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    overlays.updateThemeButtonUI(savedTheme === 'light');
 
     // Notify YouTube Playables SDK
     ytSDK.notifyFirstFrameReady();

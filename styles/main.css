@@ -18,19 +18,6 @@
   --bg-radial: radial-gradient(circle at center, #1e293b 0%, #0f172a 45%, #050816 100%);
 }
 
-/* Light Theme Variables */
-html[data-theme="light"] {
-  --bg-dark: #f8fafc;
-  --bg-panel: rgba(255, 255, 255, 0.94);
-  --border-color: #cbd5e1;
-  --text-main: #0f172a;
-  --text-muted: #475569;
-  --accent-cyan: #0284c7;
-  --accent-cyan-hover: #0369a1;
-  --grid-line: rgba(15, 23, 42, 0.06);
-  --bg-radial: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 50%, #cbd5e1 100%);
-}
-
 * {
   box-sizing: border-box;
   user-select: none;
@@ -49,7 +36,6 @@ body {
   color: var(--text-main);
   font-family: var(--font-family);
   font-weight: 600;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #game-container {
@@ -98,8 +84,8 @@ body {
 
 .touch-joystick-zone {
   position: absolute;
-  /* Positioned higher off bottom edge for ergonomic thumb placement */
-  bottom: clamp(100px, 18vh, 220px);
+  /* Higher off bottom edge for comfortable reach and avoiding gesture bars */
+  bottom: clamp(100px, 20vh, 220px);
   width: clamp(100px, 24vw, 140px);
   height: clamp(100px, 24vw, 140px);
   border: 2px dashed rgba(255, 255, 255, 0.3);
@@ -122,10 +108,6 @@ body {
   border-color: rgba(251, 59, 91, 0.45);
   background: rgba(251, 59, 91, 0.12);
   box-shadow: 0 0 20px rgba(251, 59, 91, 0.15);
-}
-
-html[data-theme="light"] .touch-joystick-zone {
-  border-color: rgba(15, 23, 42, 0.3);
 }
 
 .touch-joystick-knob {
@@ -159,29 +141,6 @@ html[data-theme="light"] .touch-joystick-zone {
   text-transform: uppercase;
 }
 
-/* Full-Page Theme Toggle Animation with View Transitions API */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-  z-index: 1;
-}
-
-::view-transition-new(root) {
-  z-index: 9999;
-}
-
-html[data-theme="light"]::view-transition-old(root) {
-  z-index: 9999;
-}
-
-html[data-theme="light"]::view-transition-new(root) {
-  z-index: 1;
-}
-
 /* Nuke Bomb White Screen Flash Animation */
 .nuke-flash {
   position: absolute;
@@ -189,7 +148,7 @@ html[data-theme="light"]::view-transition-new(root) {
   z-index: 15;
   background-color: #ffffff;
   pointer-events: none;
-  animation: nuke-flash-anim 2s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  animation: nuke-flash-anim 0.5s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
 }
 
 @keyframes nuke-flash-anim {

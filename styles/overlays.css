@@ -174,50 +174,6 @@
   border-radius: 0 10px 10px 0;
 }
 
-/* Light Theme Overlays Overrides */
-html[data-theme="light"] .overlay {
-  background: rgba(241, 245, 249, 0.75);
-}
-
-html[data-theme="light"] .panel h1 {
-  background: linear-gradient(135deg, #0f172a 0%, #0284c7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-html[data-theme="light"] .panel h2 {
-  color: #d97706;
-}
-
-html[data-theme="light"] .controls-hint {
-  background: rgba(15, 23, 42, 0.04);
-  color: #334155;
-}
-
-html[data-theme="light"] .btn-primary {
-  background: #0284c7;
-  color: #ffffff;
-}
-
-html[data-theme="light"] .btn-secondary {
-  background: #e2e8f0;
-  color: #0f172a;
-  border: 1px solid #cbd5e1;
-}
-
-html[data-theme="light"] .btn-secondary:hover {
-  background: #cbd5e1;
-}
-
-html[data-theme="light"] .setting-row {
-  background: rgba(15, 23, 42, 0.04);
-}
-
-html[data-theme="light"] .welcome-dialog {
-  color: #334155;
-  background: rgba(2, 132, 199, 0.08);
-}
-
 /* Responsive Device Controls Display */
 @media (pointer: fine) and (min-width: 1025px) {
   .desktop-only { display: block !important; }

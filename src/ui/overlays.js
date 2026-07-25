@@ -14,28 +14,37 @@ export class OverlaysManager {
     this.restartButton = document.getElementById('restart-button');
     this.retryButton = document.getElementById('retry-button');
     this.homeButton = document.getElementById('home-button');
-    this.pauseHomeBtn = document.getElementById('pause-home-btn');
+    this.pauseHomeButton = document.getElementById('pause-home-button');
 
     this.startSettingsBtn = document.getElementById('start-settings-btn');
     this.pauseSettingsBtn = document.getElementById('pause-settings-btn');
     this.settingsBackBtn = document.getElementById('settings-back-btn');
     this.sfxToggleBtn = document.getElementById('sfx-toggle-btn');
-    this.themeToggleBtn = document.getElementById('theme-toggle-btn');
 
     this.finalScoreEl = document.getElementById('final-score');
     this.finalTimeEl = document.getElementById('final-time');
     this.topScoreDisplay = document.getElementById('top-score-display');
+    this.deviceTypeLabel = document.getElementById('device-type-label');
+    this.detectedControlsMode = document.getElementById('detected-controls-mode');
 
     this.previousOverlay = 'start'; // 'start' or 'pause'
+    this.detectDeviceControls();
   }
 
-  bindEvents({ onStart, onResume, onRestart, onHome, onToggleSfx, onToggleTheme }) {
+  detectDeviceControls() {
+    const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
+    const modeText = isMobile ? 'Mobile / Tablet Touch' : 'Keyboard & Mouse';
+    if (this.deviceTypeLabel) this.deviceTypeLabel.textContent = modeText;
+    if (this.detectedControlsMode) this.detectedControlsMode.textContent = modeText;
+  }
+
+  bindEvents({ onStart, onResume, onRestart, onHome, onToggleSfx }) {
     if (this.startButton) this.startButton.addEventListener('click', onStart);
     if (this.resumeButton) this.resumeButton.addEventListener('click', onResume);
     if (this.restartButton) this.restartButton.addEventListener('click', onRestart);
     if (this.retryButton) this.retryButton.addEventListener('click', onStart);
     if (this.homeButton) this.homeButton.addEventListener('click', onHome);
-    if (this.pauseHomeBtn) this.pauseHomeBtn.addEventListener('click', onHome);
+    if (this.pauseHomeButton) this.pauseHomeButton.addEventListener('click', onHome);
 
     // Settings Navigation
     if (this.startSettingsBtn) {
@@ -66,58 +75,6 @@ export class OverlaysManager {
         }
       });
     }
-
-    if (this.themeToggleBtn) {
-      this.themeToggleBtn.addEventListener('click', (e) => {
-        if (onToggleTheme) {
-          this.toggleThemeWithAnimation(e, onToggleTheme);
-        }
-      });
-    }
-  }
-
-  toggleThemeWithAnimation(event, onToggleTheme) {
-    const isTouch = event.touches && event.touches[0];
-    const x = isTouch ? event.touches[0].clientX : (event.clientX ?? window.innerWidth / 2);
-    const y = isTouch ? event.touches[0].clientY : (event.clientY ?? window.innerHeight / 2);
-
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-
-    const performToggle = () => {
-      const isLight = onToggleTheme();
-      this.updateThemeButtonUI(isLight);
-    };
-
-    if (!document.startViewTransition) {
-      performToggle();
-      return;
-    }
-
-    const transition = document.startViewTransition(() => {
-      performToggle();
-    });
-
-    transition.ready.then(() => {
-      const clipPath = [
-        `circle(0px at ${x}px ${y}px)`,
-        `circle(${endRadius}px at ${x}px ${y}px)`
-      ];
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-
-      document.documentElement.animate(
-        {
-          clipPath: isLight ? clipPath : [...clipPath].reverse()
-        },
-        {
-          duration: 500,
-          easing: 'ease-in-out',
-          pseudoElement: isLight ? '::view-transition-new(root)' : '::view-transition-old(root)'
-        }
-      );
-    });
   }
 
   updateSfxButtonUI(isMuted) {
@@ -131,18 +88,8 @@ export class OverlaysManager {
     }
   }
 
-  updateThemeButtonUI(isLight) {
-    if (!this.themeToggleBtn) return;
-    if (isLight) {
-      this.themeToggleBtn.textContent = '☀️ Light';
-      this.themeToggleBtn.classList.remove('active');
-    } else {
-      this.themeToggleBtn.textContent = '🌙 Dark';
-      this.themeToggleBtn.classList.add('active');
-    }
-  }
-
   showStartScreen(topScore) {
+    this.detectDeviceControls();
     if (this.topScoreDisplay) this.topScoreDisplay.textContent = topScore;
     if (this.startOverlay) this.startOverlay.hidden = false;
     if (this.pauseOverlay) this.pauseOverlay.hidden = true;
@@ -151,6 +98,7 @@ export class OverlaysManager {
   }
 
   showPauseScreen() {
+    this.detectDeviceControls();
     if (this.pauseOverlay) this.pauseOverlay.hidden = false;
     if (this.settingsOverlay) this.settingsOverlay.hidden = true;
   }
