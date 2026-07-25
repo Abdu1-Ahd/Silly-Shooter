@@ -18,11 +18,20 @@
     <!-- Top HUD Bar (Offset for YouTube Playables Top Safe Area) -->
     <div id="hud">
       <div class="hud-group">
+        <span class="stat">Wave: <span id="wave" class="stat-val">1</span></span>
         <span class="stat">Score: <span id="score" class="stat-val">0</span></span>
         <span class="stat">Time: <span id="time" class="stat-val">0s</span></span>
         <button id="pause-btn" class="hud-btn" title="Pause Game (ESC)" aria-label="Pause Game">⏸️</button>
       </div>
       <div id="powerup-bar"></div>
+    </div>
+
+    <!-- Mega Boss Health Bar Container (Top Center) -->
+    <div id="boss-health-container" hidden>
+      <span class="boss-title">⚠️ MEGA BOSS ANOMALY ⚠️</span>
+      <div class="boss-hp-track">
+        <div id="boss-hp-fill"></div>
+      </div>
     </div>
 
     <!-- Dynamic Entities Container -->

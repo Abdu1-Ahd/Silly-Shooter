@@ -3,7 +3,7 @@
  */
 export class Enemy {
   constructor(type, x, y) {
-    this.type = type; // 'chaser', 'speeder', 'tank'
+    this.type = type; // 'chaser', 'speeder', 'tank', 'splitter', 'mini'
     this.x = x;
     this.y = y;
 
@@ -23,6 +23,22 @@ export class Enemy {
       this.color = '#c084fc'; // Purple
       this.glow = '#a855f7';
       this.scoreVal = 5;
+    } else if (type === 'splitter') {
+      this.radius = 14;
+      this.speed = 85;
+      this.hp = 2;
+      this.maxHp = 2;
+      this.color = '#38bdf8'; // Cyan
+      this.glow = '#0284c7';
+      this.scoreVal = 3;
+    } else if (type === 'mini') {
+      this.radius = 7;
+      this.speed = 145;
+      this.hp = 1;
+      this.maxHp = 1;
+      this.color = '#60a5fa'; // Light Blue
+      this.glow = '#3b82f6';
+      this.scoreVal = 1;
     } else {
       // Default Chaser
       this.radius = 11;
@@ -44,7 +60,7 @@ export class Enemy {
       position: 'absolute',
       width: `${this.radius * 2}px`,
       height: `${this.radius * 2}px`,
-      borderRadius: '50%',
+      borderRadius: this.type === 'splitter' ? '25%' : '50%',
       background: `radial-gradient(circle at 35% 35%, #ffffff, ${this.color})`,
       boxShadow: `0 0 16px ${this.glow}`,
       zIndex: '2',
@@ -52,7 +68,14 @@ export class Enemy {
     });
   }
 
-  update(dt, playerX, playerY, speedMultiplier = 1) {
+  update(dt, playerX, playerY, speedMultiplier = 1, isFrozen = false) {
+    if (isFrozen) {
+      this.element.style.filter = 'hue-rotate(180deg) brightness(1.3)';
+      return;
+    } else {
+      this.element.style.filter = 'none';
+    }
+
     const dx = (playerX + 14) - (this.x + this.radius);
     const dy = (playerY + 14) - (this.y + this.radius);
     const dist = Math.hypot(dx, dy) || 1;
@@ -70,7 +93,7 @@ export class Enemy {
 
   takeDamage(amount) {
     this.hp -= amount;
-    if (this.hp > 0 && this.type === 'tank') {
+    if (this.hp > 0 && (this.type === 'tank' || this.type === 'splitter')) {
       // Visual flash on hit
       this.element.style.filter = 'brightness(2.5)';
       setTimeout(() => {
@@ -104,9 +127,11 @@ export function spawnEnemy(containerW, containerH, elapsedSeconds) {
   const rand = Math.random();
   let type = 'chaser';
 
-  if (elapsedSeconds > 15 && rand < 0.25) {
+  if (elapsedSeconds > 25 && rand < 0.25) {
+    type = 'splitter';
+  } else if (elapsedSeconds > 15 && rand < 0.45) {
     type = 'speeder';
-  } else if (elapsedSeconds > 30 && rand > 0.75) {
+  } else if (elapsedSeconds > 35 && rand > 0.70) {
     type = 'tank';
   }
 

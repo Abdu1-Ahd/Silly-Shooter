@@ -47,6 +47,26 @@ body {
   cursor: crosshair;
 }
 
+/* 20% Default Zoom Out on Mobile Screens for Broader Field of View */
+@media (max-width: 768px), (max-height: 600px) {
+  #entities-layer {
+    transform: scale(0.85);
+    transform-origin: center center;
+  }
+}
+
+/* Dynamic Screen Shake Effect */
+.shake-active {
+  animation: screen-shake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes screen-shake {
+  10%, 90% { transform: translate3d(-2px, 1px, 0); }
+  20%, 80% { transform: translate3d(3px, -2px, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 3px, 0); }
+  40%, 60% { transform: translate3d(4px, -3px, 0); }
+}
+
 /* Field Grid lines for arcade feel */
 #game-container::before {
   content: '';
@@ -66,7 +86,7 @@ body {
   pointer-events: none;
 }
 
-/* Touch Control Layer for Mobile Playables */
+/* Touch Control Layer for Mobile & Tablet */
 #touch-controls {
   position: absolute;
   inset: 0;
@@ -75,8 +95,7 @@ body {
   display: none;
 }
 
-@media (max-width: 1024px),
-(pointer: coarse) {
+@media (max-width: 1024px), (pointer: coarse) {
   #touch-controls {
     display: block;
   }
@@ -84,10 +103,10 @@ body {
 
 .touch-joystick-zone {
   position: absolute;
-  /* Higher off bottom edge for comfortable reach and avoiding gesture bars */
-  bottom: clamp(100px, 20vh, 220px);
-  width: clamp(100px, 24vw, 140px);
-  height: clamp(100px, 24vw, 140px);
+  /* Elevated higher off bottom edge for comfortable thumb reach & gesture clearance */
+  bottom: clamp(90px, 18vh, 180px);
+  width: clamp(95px, 22vw, 135px);
+  height: clamp(95px, 22vw, 135px);
   border: 2px dashed rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   pointer-events: auto;
@@ -110,14 +129,29 @@ body {
   box-shadow: 0 0 20px rgba(251, 59, 91, 0.15);
 }
 
+/* Mobile Landscape Orientation Alignment */
+@media (orientation: landscape) and (max-height: 600px) {
+  .touch-joystick-zone {
+    bottom: clamp(35px, 10vh, 70px);
+    width: clamp(90px, 18vh, 120px);
+    height: clamp(90px, 18vh, 120px);
+  }
+  .touch-joystick-zone.move-zone {
+    left: clamp(25px, 6vw, 60px);
+  }
+  .touch-joystick-zone.fire-zone {
+    right: clamp(25px, 6vw, 60px);
+  }
+}
+
 .touch-joystick-knob {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: clamp(38px, 9vw, 48px);
-  height: clamp(38px, 9vw, 48px);
-  margin-top: calc(clamp(38px, 9vw, 48px) / -2);
-  margin-left: calc(clamp(38px, 9vw, 48px) / -2);
+  width: clamp(36px, 8vw, 46px);
+  height: clamp(36px, 8vw, 46px);
+  margin-top: calc(clamp(36px, 8vw, 46px) / -2);
+  margin-left: calc(clamp(36px, 8vw, 46px) / -2);
   background: rgba(56, 189, 248, 0.6);
   border: 2px solid var(--accent-cyan);
   border-radius: 50%;
@@ -134,7 +168,7 @@ body {
 
 .fire-label {
   pointer-events: none;
-  font-size: clamp(9px, 2.2vw, 11px);
+  font-size: clamp(9px, 2vw, 11px);
   font-weight: 800;
   color: rgba(255, 255, 255, 0.65);
   letter-spacing: 0.5px;

@@ -6,7 +6,7 @@ export class Player {
     this.radius = 14; // 28px diameter
     this.x = (containerWidth - this.radius * 2) / 2;
     this.y = (containerHeight - this.radius * 2) / 2;
-    this.speed = 320;
+    this.speed = 330;
     this.hp = 100;
     this.maxHp = 100;
     
@@ -14,6 +14,9 @@ export class Player {
     this.shieldTimer = 0;
     this.tripleShotTimer = 0;
     this.rapidFireTimer = 0;
+    this.freezeTimer = 0;
+    this.laserTimer = 0;
+    this.missilesTimer = 0;
     this.lastShotTime = 0;
 
     this.element = document.createElement('div');
@@ -44,6 +47,9 @@ export class Player {
     this.shieldTimer = 0;
     this.tripleShotTimer = 0;
     this.rapidFireTimer = 0;
+    this.freezeTimer = 0;
+    this.laserTimer = 0;
+    this.missilesTimer = 0;
     this.lastShotTime = 0;
     this.render();
   }
@@ -53,10 +59,15 @@ export class Player {
     if (this.shieldTimer > 0) this.shieldTimer -= dt;
     if (this.tripleShotTimer > 0) this.tripleShotTimer -= dt;
     if (this.rapidFireTimer > 0) this.rapidFireTimer -= dt;
+    if (this.freezeTimer > 0) this.freezeTimer -= dt;
+    if (this.laserTimer > 0) this.laserTimer -= dt;
+    if (this.missilesTimer > 0) this.missilesTimer -= dt;
 
-    // Visual feedback for Shield
+    // Visual feedback for Shield & Laser
     if (this.shieldTimer > 0) {
       this.element.style.boxShadow = '0 0 30px #38bdf8, 0 0 0 6px rgba(56, 189, 248, 0.4)';
+    } else if (this.laserTimer > 0) {
+      this.element.style.boxShadow = '0 0 30px #4ade80, 0 0 0 6px rgba(74, 222, 128, 0.4)';
     } else {
       this.element.style.boxShadow = '0 0 24px #38bdf8, inset 0 0 8px #0284c7';
     }
@@ -85,13 +96,17 @@ export class Player {
   }
 
   applyPowerup(type) {
-    if (type === 'shield') this.shieldTimer = 8; // 8 seconds shield
-    if (type === 'triple') this.tripleShotTimer = 10; // 10 seconds triple shot
-    if (type === 'rapid') this.rapidFireTimer = 8; // 8 seconds rapid fire
+    if (type === 'shield') this.shieldTimer = 8;
+    if (type === 'triple') this.tripleShotTimer = 10;
+    if (type === 'rapid') this.rapidFireTimer = 8;
+    if (type === 'freeze') this.freezeTimer = 5;
+    if (type === 'laser') this.laserTimer = 6;
+    if (type === 'missiles') this.missilesTimer = 6;
   }
 
   getFireRateDelay() {
-    return this.rapidFireTimer > 0 ? 110 : 220; // MS delay between shots
+    if (this.laserTimer > 0) return 90;
+    return this.rapidFireTimer > 0 ? 100 : 200;
   }
 
   destroy() {

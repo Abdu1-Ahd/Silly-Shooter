@@ -3,7 +3,7 @@
  */
 export class Powerup {
   constructor(type, x, y) {
-    this.type = type; // 'shield', 'triple', 'rapid', 'nuke'
+    this.type = type; // 'shield', 'triple', 'rapid', 'nuke', 'freeze', 'missiles', 'laser'
     this.x = x;
     this.y = y;
     this.radius = 12;
@@ -22,6 +22,12 @@ export class Powerup {
       bg = '#fde047'; glow = 'rgba(253, 224, 71, 0.6)'; symbol = '⚡';
     } else if (this.type === 'rapid') {
       bg = '#c084fc'; glow = 'rgba(192, 132, 252, 0.6)'; symbol = '🔥';
+    } else if (this.type === 'freeze') {
+      bg = '#60a5fa'; glow = 'rgba(96, 165, 250, 0.6)'; symbol = '❄️';
+    } else if (this.type === 'missiles') {
+      bg = '#fb923c'; glow = 'rgba(251, 146, 60, 0.6)'; symbol = '🚀';
+    } else if (this.type === 'laser') {
+      bg = '#4ade80'; glow = 'rgba(74, 222, 128, 0.6)'; symbol = '🟢';
     } else {
       bg = '#fb3b5b'; glow = 'rgba(251, 59, 91, 0.6)'; symbol = '💣';
     }
@@ -66,9 +72,9 @@ export class Powerup {
 }
 
 export function trySpawnPowerup(x, y) {
-  // 16% drop chance on enemy kill
-  if (Math.random() < 0.16) {
-    const types = ['shield', 'triple', 'rapid', 'nuke'];
+  // 18% drop chance on enemy kill
+  if (Math.random() < 0.18) {
+    const types = ['shield', 'triple', 'rapid', 'nuke', 'freeze', 'missiles', 'laser'];
     const type = types[Math.floor(Math.random() * types.length)];
     return new Powerup(type, x, y);
   }
